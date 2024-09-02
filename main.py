@@ -27,7 +27,7 @@ def get_question_and_tag(chat_id):
     email = "tangbaohuy2307@gmail.com"
     api_token = CONVERSATION_API_KEY
 
-    url = f"https://{subdomain}.zendesk.com/api/v2/chats/{chat_id}.json"
+    url = f"https://www.zopim.com/api/v2/chats/{chat_id}"
     headers = {
         "Content-Type": "application/json"
     }
