@@ -6,7 +6,7 @@ from pydantic import BaseModel
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
 
@@ -31,7 +31,7 @@ def generate_response(user_question: str, tag: str) -> str:
     details = tag_details.get(tag.lower(), "No specific details available for this tag.")
     
     # Create a prompt by combining the user question and the relevant details
-    prompt = f"User asked: '{user_question}'. Please include the following information in your response: {details}"
+    prompt = f"User asked: {user_question}. Please include the following information in your response: {details}"
     
     # Call GPT-40 mini to generate a response
     response = openai.chat.completions.create(
@@ -45,7 +45,7 @@ def generate_response(user_question: str, tag: str) -> str:
     print(content)
 
     # Return the generated response text
-    return content
+    return {"response": content}
 
 # Webhook endpoint to handle incoming requests from the Zendesk bot
 @app.post("/webhook")
