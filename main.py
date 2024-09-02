@@ -17,6 +17,7 @@ openai = OpenAI(api_key=OPENAI_API_KEY)
 class BotRequest(BaseModel):
     question: str
     tag: str
+    chat_id: str
 
 # Define a dictionary to map tags to details
 tag_details = {
@@ -53,6 +54,9 @@ async def webhook(bot_request: BotRequest):
     # Extract the user's question and the associated tag from the request
     user_question = bot_request.question
     tag = bot_request.tag
+    chat_id = bot_request.chat_id
+
+    print(chat_id)
     
     # Generate a response using GPT-4o mini
     response_text = generate_response(user_question, tag)
