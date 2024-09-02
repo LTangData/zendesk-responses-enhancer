@@ -1,23 +1,19 @@
 import os
+import requests
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from openai import OpenAI
-from pydantic import BaseModel
+from models import *
 
 load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+CONVERSATION_API_KEY = os.getenv("CONVERSATION_API_KEY")
 
 app = FastAPI()
 
 # Set your OpenAI API key
 openai = OpenAI(api_key=OPENAI_API_KEY)
-
-# Pydantic model for the request body
-class BotRequest(BaseModel):
-    question: str
-    tag: str
-    chat_id: str
 
 # Define a dictionary to map tags to details
 tag_details = {
@@ -25,6 +21,24 @@ tag_details = {
     'refund': "Inform the user that refunds can be requested within 30 days of purchase, and they must provide the order number. Refunds are processed within 5-7 business days.",
     # Add more tags and their associated details as needed
 }
+
+def get_question_and_tag(chat_id):
+    subdomain = "comany1205"
+    email = "tangbaohuy2307@gmail.com"
+    api_token = CONVERSATION_API_KEY
+
+    url = f"https://{subdomain}.zendesk.com/api/v2/chats/{chat_id}.json"
+    headers = {
+        "Content-Type": "application/json"
+    }
+    response = requests.get(url, auth=(f"{email}/token", api_token), headers=headers)
+
+    if response.status_code == 200:
+        ticket_data = response.json()
+        print(ticket_data)
+    else:
+        print(f"Failed to retrieve ticket: {response.status_code}")
+    pass
 
 # Function to generate a prompt and get a response from GPT
 def generate_response(user_question: str, tag: str) -> str:
@@ -50,17 +64,16 @@ def generate_response(user_question: str, tag: str) -> str:
 
 # Webhook endpoint to handle incoming requests from the Zendesk bot
 @app.post("/webhook")
-async def webhook(bot_request: BotRequest):
+async def webhook(user_request: UserRequest):
     # Extract the user's question and the associated tag from the request
-    user_question = bot_request.question
-    tag = bot_request.tag
-    chat_id = bot_request.chat_id
-
-    print(chat_id)
+    chat_id = user_request.chat_id
+    request_details = get_question_and_tag(chat_id)
     
+    user_question = request_details.question
+    tag = request_details.tag
+
     # Generate a response using GPT-4o mini
     response_text = generate_response(user_question, tag)
     
     # Return the generated response back to the bot
     return response_text
-
