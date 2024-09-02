@@ -33,6 +33,8 @@ def get_question_and_tag(chat_id):
     }
     response = requests.get(url, auth=(f"{email}/token", api_token), headers=headers)
 
+    print(chat_id)
+
     if response.status_code == 200:
         ticket_data = response.json()
         print(ticket_data)
