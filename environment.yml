@@ -1,0 +1,10 @@
+name: zendesk-responses
+channels:
+  - conda-forge
+dependencies:
+  - fastapi
+  - uvicorn
+  - openai
+  - requests
+  - python-dotenv
+  - pip
