@@ -23,7 +23,6 @@ tag_details = {
 }
 
 def get_question_and_tag(chat_id):
-    subdomain = "comany1205"
     email = "tangbaohuy2307@gmail.com"
     api_token = CONVERSATION_API_KEY
 
