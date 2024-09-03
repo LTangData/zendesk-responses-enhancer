@@ -14,8 +14,11 @@ ZENDESK_SUBDOMAIN = "comany1205" # Replace with your Zendesk subdomain
 ZENDESK_USER_MAIL = "tangbaohuy2307@gmail.com" # Replace with the Zendesk email address used to access the subdomain
 
 # Check if OPENAI_API_KEY and ZENDESK_API_TOKEN were correctly retrieved from environment
-if not OPENAI_API_KEY or not ZENDESK_API_TOKEN:
-    print("Either OPENAI_API_KEY or ZENDESK_API_TOKEN environment variable is not set. Exiting.")
+if not OPENAI_API_KEY:
+    print("OPENAI_API_KEY environment variable is not set. Exiting.")
+    exit()
+elif not ZENDESK_API_TOKEN:
+    print("ZENDESK_API_TOKEN environment variable is not set. Exiting.")
     exit()
 
 # Create an instance of FastAPI application
