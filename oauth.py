@@ -42,34 +42,33 @@ def create_token():
     if response.status_code == 200:
         # Parse the JSON response
         token_data = response.json()
-        print(token_data)
-        access_token = token_data["token"]["full_token"]
-        print(f"Token successfully created: {access_token}")
+        token_id = token_data["token"]["id"]
+        access_token = token_data["token"]["token"]
+        response = f"Token successfully created: {token_id}"
+        print(response)
         return access_token
     elif response.status_code == 204:
         print("Successfully requested but no content returned")
         return None
     else:
-        print(f"Failed to create access token: {response.status_code}")
+        print(f"Failed to create new access token: {response.status_code}")
         print(response.text)
         return None
     
 # Function to show a specific access token
 def show_token(token_id):
-    # Specify which access token you want to show
-    token_url += f"/{token_id}"
-
     # Make a GET request to show the OAuth access token
-    response = requests.get(token_url, json=data, headers=headers)
+    response = requests.get(token_url + f"/{token_id}", json=data, headers=headers)
 
     # Check if the request was successful
     if response.status_code == 200:
         # Parse the JSON response
         token_data = response.json()
-        print(f"Token {token_id}:\t{token_data}")
-        return token_data
+        token_details = token_data["token"]
+        print(f"Token {token_id}:\n{token_details}")
+        return token_details
     else:
-        print(f"Failed to show access token: {response.status_code}")
+        print(f"Failed to show token {token_id}: {response.status_code}")
         print(response.text)
         return None
     
@@ -91,18 +90,15 @@ def list_tokens():
     
 # Function to delete an OAuth access token
 def revoke_token(token_id):
-    # Specify which access token you want to delete
-    token_url += f"/{token_id}"
-
     # Make a DELETE request to get a list of all OAuth access tokens
-    response = requests.delete(token_url, json=data, headers=headers)
+    response = requests.delete(token_url + f"/{token_id}", json=data, headers=headers)
 
     # Check if the request was successful
-    if response.status_code == 200:
+    if response.status_code == 200 or response.status_code == 204:
         response = f"Token {token_id} successfully deleted"
         print(response)
         return response
     else:
-        print(f"Failed to access the list of all tokens: {response.status_code}")
+        print(f"Failed to delete token {token_id}: {response.status_code}")
         print(response.text)
         return None

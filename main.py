@@ -37,15 +37,16 @@ tag_details = {
 
 # Function to extract the question input by user and its tag
 def get_question_and_tag(chat_id):
-
     # Check if any access tokens are available
     token_data = list_tokens()
     count = token_data["count"]
     if count == 0:
         access_token = create_token()
     else:
-        token_id = token_data["tokens"]
-        access_token = show_token(token_id)
+        # Get the first token as default one
+        token_id = token_data["tokens"][0]["id"]
+        token_details = show_token(token_id)
+        access_token = token_details["token"]
 
     url = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com/api/v2/chat/chats/{chat_id}"
     headers = {
