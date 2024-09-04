@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from openai import OpenAI
 from models import *
+from oauth import *
 
 # Import all environment variables
 load_dotenv()
@@ -36,14 +37,24 @@ tag_details = {
 
 # Function to extract the question input by user and its tag
 def get_question_and_tag(chat_id):
+
+    # Check if any access tokens are available
+    token_data = list_tokens()
+    count = token_data["count"]
+    if count == 0:
+        access_token = create_token()
+    else:
+        token_id = token_data["tokens"]
+        access_token = show_token(token_id)
+
     url = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com/api/v2/chat/chats/{chat_id}"
     headers = {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}"
     }
-    auth = f"{ZENDESK_USER_MAIL}/token", ZENDESK_API_TOKEN
 
     # Perform the HTTP GET request
-    response = requests.get(url, auth=auth, headers=headers)
+    response = requests.get(url, headers=headers)
 
     print(chat_id)
 
@@ -96,3 +107,23 @@ async def webhook(user_request: UserRequest):
     
     # Return the generated response back to the bot
     return response_text
+
+@app.post("/token")
+async def generate_token():
+    access_token = create_token()
+    return access_token
+
+@app.get("/token")
+async def inspect_token(token_id: str):
+    access_token = show_token(token_id)
+    return access_token
+
+@app.get("/tokens")
+async def list_all():
+    tokens = list_tokens()
+    return tokens
+
+@app.delete("/token")
+async def delete_token(token_id: str):
+    response = revoke_token(token_id)
+    return response
