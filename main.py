@@ -98,6 +98,8 @@ def generate_response(user_question: str, tag: str) -> str:
 async def webhook(user_request: UserRequest):
     # Extract the user's question and the associated tag from the chat using chat id
     chat_id = user_request.chat_id
+    print(chat_id)
+
     request_details = get_question_and_tag(chat_id)
     
     user_question = request_details.question
