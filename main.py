@@ -48,20 +48,21 @@ def get_question_and_tag(chat_id):
         token_details = show_token(token_id)
         access_token = token_details["token"]
 
+    print(access_token)
+
     url = f"https://{ZENDESK_SUBDOMAIN}.zendesk.com/api/v2/chat/chats/{chat_id}"
     headers = {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {access_token}"
+        "Authorization": f"Basic {encoded_credentials}"
     }
 
     # Perform the HTTP GET request
     response = requests.get(url, headers=headers)
 
-    print(chat_id)
-
     # Check for HTTP codes other than 200
     if response.status_code != 200:
-        print('Status:', response.status_code, "Problem with the request. Exiting.")
+        print(f"Request failed: {response.status_code}")
+        print(response.text)
         exit()
 
     # Decode the JSON response into a dictionary and use the data

@@ -19,7 +19,7 @@ data = {
     "token": {
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
-        "scopes": ["tickets:read"]
+        "scopes": ["read", "write"]
     }
 }
 
